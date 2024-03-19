@@ -1,0 +1,238 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.F_Main..create(BaseForm)
+Gui.F_Main..caption("Document Group Packing List Print")
+Gui.F_Main..size(5325,2685)
+Gui.F_Main..position(0,0)
+Gui.F_Main..event(UnLoad,exit)
+Gui.F_Main..alwaysontop(False)
+Gui.F_Main..fontname("Arial")
+Gui.F_Main..fontsize(8)
+Gui.F_Main..forecolor(0)
+Gui.F_Main..fontstyle(False,False,False,False,False)
+Gui.F_Main..BackColor(-2147483633)
+Gui.F_Main..controlbox(True)
+Gui.F_Main..maxbutton(False)
+Gui.F_Main..minbutton(True)
+Gui.F_Main..mousepointer(0)
+Gui.F_Main..moveable(True)
+Gui.F_Main..sizeable(False)
+Gui.F_Main..ShowInTaskBar(True)
+Gui.F_Main..titlebar(True)
+Gui.F_Main..MinX(0)
+Gui.F_Main..MinY(0)
+Gui.F_Main.frmControls.create(frame)
+Gui.F_Main.frmControls.caption("")
+Gui.F_Main.frmControls.size(4500,435)
+Gui.F_Main.frmControls.position(100,1715)
+Gui.F_Main.frmControls.visible(True)
+Gui.F_Main.frmControls.borderstyle(0)
+Gui.F_Main.frmControls.fontname("Arial")
+Gui.F_Main.frmControls.fontsize(8)
+Gui.F_Main.frmControls.Enabled(True)
+Gui.F_Main.frmControls.Zorder(0)
+Gui.F_Main.cmdSave.create(button)
+Gui.F_Main.cmdSave.caption("Save")
+Gui.F_Main.cmdSave.visible(True)
+Gui.F_Main.cmdSave.size(855,375)
+Gui.F_Main.cmdSave.zorder(0)
+Gui.F_Main.cmdSave.position(0,0)
+Gui.F_Main.cmdSave.enabled(True)
+Gui.F_Main.cmdSave.parent("frmControls")
+Gui.F_Main.cmdSave.fontname("Arial")
+Gui.F_Main.cmdSave.fontsize(8)
+Gui.F_Main.cmdSave.event(Click,cmdsave_click)
+Gui.F_Main.cmdClear.create(button)
+Gui.F_Main.cmdClear.caption("Clear")
+Gui.F_Main.cmdClear.visible(True)
+Gui.F_Main.cmdClear.size(855,375)
+Gui.F_Main.cmdClear.zorder(0)
+Gui.F_Main.cmdClear.position(945,0)
+Gui.F_Main.cmdClear.enabled(True)
+Gui.F_Main.cmdClear.parent("frmControls")
+Gui.F_Main.cmdClear.fontname("Arial")
+Gui.F_Main.cmdClear.fontsize(8)
+Gui.F_Main.cmdClear.event(Click,cmdClear_click)
+Gui.F_Main.lbl1.create(label,"ID",True,2490,255,1,100,145,True,0,"Arial",8,-2147483633,0,0)
+Gui.F_Main.lbl1.BorderStyle(0)
+Gui.F_Main.txtGRP_ID.create(textbox,"",True,870,315,0,100,400,False,0,"Arial",8,-2147483643,1)
+Gui.F_Main.cmdGRP_ID.create(button)
+Gui.F_Main.cmdGRP_ID.caption("^")
+Gui.F_Main.cmdGRP_ID.visible(True)
+Gui.F_Main.cmdGRP_ID.size(315,315)
+Gui.F_Main.cmdGRP_ID.zorder(0)
+Gui.F_Main.cmdGRP_ID.position(1000,400)
+Gui.F_Main.cmdGRP_ID.enabled(True)
+Gui.F_Main.cmdGRP_ID.fontname("Arial")
+Gui.F_Main.cmdGRP_ID.fontsize(8)
+Gui.F_Main.cmdGRP_ID.event(Click,cmdGRP_ID_click)
+Gui.F_Main.cmdGRP_ID.BackColor(-2147483643)
+Gui.F_Main.lbl2.create(label,"Name",True,2490,255,1,1430,160,True,0,"Arial",8,-2147483633,0,0)
+Gui.F_Main.lbl2.BorderStyle(0)
+Gui.F_Main.txtGRP_NAME.create(textbox,"",True,2010,315,0,1400,400,True,0,"Arial",8,-2147483643,1)
+Gui.F_Main.txtGRP_NAME.maxLength(50)
+Gui.F_Main.lbl3.create(label,"Description",True,2490,255,1,100,800,True,0,"Arial",8,-2147483633,0,0)
+Gui.F_Main.lbl3.BorderStyle(0)
+Gui.F_Main.txtGRP_Desc.create(textbox,"",True,3330,315,0,85,1045,True,0,"Arial",8,-2147483643,1)
+Gui.F_Main.txtGRP_Desc.maxLength(100)
+Gui.F_Main.chkPrint.create(checkbox)
+Gui.F_Main.chkPrint.caption("Print Document as Packing List Print")
+Gui.F_Main.chkPrint.visible(True)
+Gui.F_Main.chkPrint.size(3120,300)
+Gui.F_Main.chkPrint.zorder(0)
+Gui.F_Main.chkPrint.position(90,1395)
+Gui.F_Main.chkPrint.enabled(True)
+Gui.F_Main.chkPrint.fontname("Arial")
+Gui.F_Main.chkPrint.fontsize(8)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+Gui.F_main..show
+Gui.F_Main..AlwaysOnTop(True)
+Gui.F_Main..AlwaysOnTop(False)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PRT_PCK_DOC.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(exit)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.cmdGRP_ID_click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdGRP_ID_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+V.Local.sCol.Declare(String)
+V.Local.sWidth.Declare(String)
+V.Local.sret.Declare(String)
+V.Local.squery.Declare(String)
+
+F.Intrinsic.String.Split("GRP_ID*!*GRP_NAME*!*GRP_Desc","*!*",V.Local.sCol)
+F.Intrinsic.String.Split("800*!*2000*!*2800","*!*",V.Local.swidth)
+V.Local.squery.Set("SELECT GRP_ID, GRP_NAME, GRP_Desc FROM ATG_DOC_GRP ORDER BY GRP_ID")
+F.ODBC.Connection!con.OpenCompanyConnection
+F.intrinsic.UI.Browser("SELECT","con",V.Local.squery,V.Local.sCol,V.Local.sWidth,8400,8600,V.Local.sret)
+F.Intrinsic.Control.If(V.Local.sret,<>,"***CANCEL***")
+	F.Intrinsic.string.Split(V.Local.sret,"*!*",V.Local.sret)
+
+	Gui.F_Main.txtGRP_ID.text(V.local.sret(0))
+	Gui.F_Main.txtGRP_NAME.text(V.local.sret(1).Trim)
+	Gui.F_Main.txtGRP_Desc.text(V.local.sret(2).trim)
+	F.Intrinsic.String.Concat("SELECT * FROM GCG_6925_PRT_PCK_DOC WHERE GRP_ID= '",V.screen.f_main!txtGRP_ID.text,"' AND TYPE = 1 ",V.Local.squery)
+	F.ODBC.Connection!con.OpenRecordsetRO("rst",V.Local.squery)
+	F.Intrinsic.Control.If(V.ODBC.con!rst.EOF,=,False)
+		F.Intrinsic.Control.If(V.ODBC.con!rst.FieldVal!PRINT_FLAG,=,True)
+			Gui.F_Main.chkPrint.Value(1)
+		F.Intrinsic.Control.Else
+			Gui.F_Main.chkPrint.Value(0)
+		F.Intrinsic.Control.endif
+	F.Intrinsic.Control.Else
+		Gui.F_Main.chkPrint.Value(0)
+	F.Intrinsic.Control.EndIf
+	F.ODBC.con!rst.Close
+F.Intrinsic.Control.EndIf
+
+F.ODBC.Connection!Con.Close
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdGRP_ID_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PRT_PCK_DOC.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(exit)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdGRP_ID_click.End
+
+Program.Sub.cmdSave_click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSave_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+V.Local.sQuery.Declare(String)
+
+F.Intrinsic.Control.If(V.Screen.F_Main!txtGRP_ID.Text,=,"")
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Concat("SELECT * FROM GCG_6925_PRT_PCK_DOC WHERE GRP_ID= ",V.screen.f_main!txtGRP_ID.text," AND TYPE = 1",V.Local.squery)
+F.ODBC.Connection!con.OpenCompanyConnection
+F.ODBC.Connection!con.OpenRecordsetRW("rst",V.Local.sQuery)
+F.Intrinsic.Control.If(V.Odbc.con!rst.EOf,=,True)
+	F.ODBC.con!rst.AddNew
+	F.ODBC.con!rst.Set!GRP_ID(V.Screen.F_Main!txtGRP_ID.Text)
+	F.ODBC.con!rst.Set!TYPE(1)
+F.Intrinsic.Control.EndIf
+F.Intrinsic.Control.If(V.Screen.F_Main!chkPrint.Value,=,1)
+	F.ODBC.con!rst.Set!PRINT_FLAG(True)
+F.Intrinsic.Control.Else
+	F.ODBC.con!rst.Set!PRINT_FLAG(False)
+F.Intrinsic.Control.EndIf
+
+F.ODBC.con!rst.Update
+F.ODBC.con!rst.Close
+F.ODBC.Connection!Con.Close
+
+F.Intrinsic.UI.Msgbox("Group Saved")
+F.Intrinsic.Control.CallSub(Cmdclear_click)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSave_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PRT_PCK_DOC.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(exit)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSave_click.End
+Program.Sub.cmdClear_click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdClear_click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+Gui.f_main.txtGRP_ID.text("")
+Gui.f_main.txtGRP_NAME.text("")
+Gui.f_main.txtGRP_Desc.text("")
+Gui.F_Main.chkPrint.Value(0)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdClear_click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PRT_PCK_DOC.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(exit)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdClear_click.End
+Program.Sub.exit.Start
+F.Intrinsic.Control.SetErrorHandler("exit_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("exit_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+Program.Sub.exit.End
+
+Program.Sub.Comments.Start
+${$5$}$2.0.0.0$}$2
+${$6$}$rking$}$20220929134839591$}$QNdZLVy4bWuiWa9jh1ZTiKVzNnEzrvL4T2id0gTzttuABYRni4PBz4AhACU92+1xqRt/8vielaQ=
+Program.Sub.Comments.End
