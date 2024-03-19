@@ -1,0 +1,125 @@
+﻿Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+V.Local.iLinkID.Declare(Long)
+V.Local.iDocID.Declare(Long)
+V.Local.iGrpID.Declare(Long)
+V.Local.sQuery.Declare(String)
+V.Local.stemp.Declare(String)
+V.Local.sRpt.Declare(String)
+
+F.Intrinsic.Control.If(V.Caller.Hook,=,"16090")
+	'changed the check from report id to calling program.  This allows the user to have custom reports identified for different customers, and this script will still work.
+	f.Intrinsic.Control.If(v.Passed.CALLING-PGM,<>,"ORD0LZBI")
+		F.Intrinsic.Control.End
+	f.Intrinsic.Control.EndIf
+	
+	V.Local.sRpt.Set(V.Passed.009001)
+
+	F.ODBC.Connection!con.OpenConnection(V.Ambient.PDSN,V.Ambient.PUser,V.Ambient.PPass)
+		F.Intrinsic.String.Build("select DISTINCT Part, Customer from V_BI_PACKING_LIST where terminal = '{0}' and RPTID = '{1}' and Record_Type = 'S' and Part <> ''",V.Caller.Terminal,V.Local.sRpt,V.Local.sQuery)
+		F.ODBC.Connection!con.OpenRecordsetRO("rstPart",V.Local.sQuery)
+		F.Intrinsic.Control.DoUntil(V.ODBC.con!rstPart.EOF,=,True)
+			F.Intrinsic.String.Build("Select * From GCG_6925_PART_CUST Where Part = '{0}' and Customer = '{1}'",V.ODBC.con!rstPart.FieldValTrim!PART,V.ODBC.con!rstPart.FieldValTrim!Customer,V.Local.sQuery)
+			F.Data.DataTable.CreateFromSQL("PRINT","con",V.Local.sQuery,True)
+			F.Intrinsic.Control.If(v.DataTable.PRINT.RowCount--,=,-1)
+				F.Global.DocumentControl.CreateReference(V.ODBC.con!rstPart.FieldValTrim!PART,30,V.Local.iLinkID)
+				F.Intrinsic.Control.If(V.Local.iLinkID,>,0)
+					
+					F.ODBC.Connection!con.OpenRecordsetRO("rstGrpID","SELECT GRP_ID FROM GCG_6925_PRT_PCK_DOC WHERE TYPE = 1 and PRINT_FLAG = 1")
+					
+					F.Intrinsic.Control.DoUntil(V.ODBC.con!rstGrpID.EOF,=,True)
+						F.Intrinsic.String.Concat("SELECT * FROM ATG_DOC_ASSOC WHERE LINK_ID = ",V.Local.iLinkID," AND GRP_ID = ",V.odbc.con!rstGrpID.FieldVal!Grp_ID,V.Local.sQuery)
+						F.ODBC.Connection!con.OpenRecordsetRO("rstDocID",V.Local.sQuery)
+														
+						F.Intrinsic.Control.DoUntil(V.ODBC.con!rstDocID.EOF,=,True)
+							F.Intrinsic.String.Right(V.ODBC.con!rstDocID.FieldValTrim!PATH,1,V.Local.stemp)
+							F.Intrinsic.Control.If(V.Local.stemp,=,"\")
+								F.Intrinsic.String.Concat(V.ODBC.con!rstDocID.FieldValTrim!PATH,V.ODBC.con!rstDocID.FieldValTrim!FILE,V.Local.stemp)
+							F.Intrinsic.Control.Else
+								F.Intrinsic.String.Concat(V.ODBC.con!rstDocID.FieldValTrim!PATH,"\",V.ODBC.con!rstDocID.FieldValTrim!FILE,V.Local.stemp)
+							F.Intrinsic.Control.endif												
+								F.Intrinsic.task.ShellExec(V.Caller.Handle,"PRINT",V.local.sTemp,"","",5)
+								f.Intrinsic.UI.SleepMS(3000)
+							F.ODBC.con!rstDocID.MoveNext
+						F.Intrinsic.control.loop
+						F.ODBC.con!rstDocID.Close
+						F.odbc.con!rstGrpID.MoveNext
+					F.Intrinsic.Control.Loop
+					F.ODBC.con!rstGrpID.Close
+				F.Intrinsic.Control.EndIf
+			F.Intrinsic.Control.Else
+				F.Intrinsic.Control.If(V.DataTable.PRINT(V.DataTable.PRINT.RowCount--).PRT_PCK_DOC!FieldVal,=,True)
+					F.Global.DocumentControl.CreateReference(V.ODBC.con!rstPart.FieldValTrim!PART,30,V.Local.iLinkID)
+					F.Intrinsic.Control.If(V.Local.iLinkID,>,0)
+						
+						F.ODBC.Connection!con.OpenRecordsetRO("rstGrpID","SELECT GRP_ID FROM GCG_6925_PRT_PCK_DOC WHERE TYPE = 1 and PRINT_FLAG = 1")
+						
+						F.Intrinsic.Control.DoUntil(V.ODBC.con!rstGrpID.EOF,=,True)
+							F.Intrinsic.String.Concat("SELECT * FROM ATG_DOC_ASSOC WHERE LINK_ID = ",V.Local.iLinkID," AND GRP_ID = ",V.odbc.con!rstGrpID.FieldVal!Grp_ID,V.Local.sQuery)
+							F.ODBC.Connection!con.OpenRecordsetRO("rstDocID",V.Local.sQuery)
+															
+							F.Intrinsic.Control.DoUntil(V.ODBC.con!rstDocID.EOF,=,True)
+								F.Intrinsic.String.Right(V.ODBC.con!rstDocID.FieldValTrim!PATH,1,V.Local.stemp)
+								F.Intrinsic.Control.If(V.Local.stemp,=,"\")
+									F.Intrinsic.String.Concat(V.ODBC.con!rstDocID.FieldValTrim!PATH,V.ODBC.con!rstDocID.FieldValTrim!FILE,V.Local.stemp)
+								F.Intrinsic.Control.Else
+									F.Intrinsic.String.Concat(V.ODBC.con!rstDocID.FieldValTrim!PATH,"\",V.ODBC.con!rstDocID.FieldValTrim!FILE,V.Local.stemp)
+								F.Intrinsic.Control.endif												
+									F.Intrinsic.task.ShellExec(V.Caller.Handle,"PRINT",V.local.sTemp,"","",5)
+									f.Intrinsic.UI.SleepMS(3000)
+								F.ODBC.con!rstDocID.MoveNext
+							F.Intrinsic.control.loop
+							F.ODBC.con!rstDocID.Close
+							F.odbc.con!rstGrpID.MoveNext
+						F.Intrinsic.Control.Loop
+						F.ODBC.con!rstGrpID.Close
+					F.Intrinsic.Control.EndIf
+				F.Intrinsic.Control.EndIf
+			F.Intrinsic.Control.EndIf
+			F.Data.DataTable.Close("PRINT")
+			F.ODBC.con!rstPart.MoveNext
+		F.Intrinsic.Control.Loop
+		F.ODBC.con!rstPart.Close
+	F.ODBC.Connection!con.Close
+F.Intrinsic.Control.Else
+	F.Intrinsic.Control.CallSub(Exit)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PCK_DOC_GRP.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(Exit)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.Exit.Start
+F.Intrinsic.Control.SetErrorHandler("Exit_Err")
+F.Intrinsic.Control.ClearErrors
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Exit_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+Program.Sub.Exit.End
+
+Program.Sub.Comments.Start
+${$5$}$2.0.0.0$}$2
+${$6$}$rking$}$20220930085259219$}$QNdZLVy4bWuiWa9jh1ZTiKVzNnEzrvL4aJNCO7QPW26Q7dpHPOR2NFFWJL2wlY6uiWm858YdgE0=
+Program.Sub.Comments.End
