@@ -1,0 +1,205 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.FormPart..Create(BaseForm)
+Gui.FormPart..Caption("Part Customer Linkage")
+Gui.FormPart..Size(621,463)
+Gui.FormPart..MinX(0)
+Gui.FormPart..MinY(0)
+Gui.FormPart..Position(0,0)
+Gui.FormPart..AlwaysOnTop(False)
+Gui.FormPart..FontName("Tahoma")
+Gui.FormPart..FontSize(8.25)
+Gui.FormPart..ControlBox(True)
+Gui.FormPart..MaxButton(True)
+Gui.FormPart..MinButton(True)
+Gui.FormPart..MousePointer(0)
+Gui.FormPart..Moveable(True)
+Gui.FormPart..Sizeable(True)
+Gui.FormPart..ShowInTaskBar(True)
+Gui.FormPart..TitleBar(True)
+Gui.FormPart..Event(UnLoad,FormPart_UnLoad)
+Gui.FormPart.GsGridCust.Create(GsGridControl)
+Gui.FormPart.GsGridCust.Enabled(True)
+Gui.FormPart.GsGridCust.Visible(True)
+Gui.FormPart.GsGridCust.Zorder(0)
+Gui.FormPart.GsGridCust.Size(603,377)
+Gui.FormPart.GsGridCust.Position(12,19)
+Gui.FormPart.GsGridCust.Anchor(15)
+Gui.FormPart.GsGridCust.Event(RowCellClick,GsGridCust_RowCellClick)
+Gui.FormPart.cmdSave.Create(Button)
+Gui.FormPart.cmdSave.Enabled(True)
+Gui.FormPart.cmdSave.Visible(True)
+Gui.FormPart.cmdSave.Zorder(0)
+Gui.FormPart.cmdSave.Size(75,23)
+Gui.FormPart.cmdSave.Position(13,407)
+Gui.FormPart.cmdSave.Caption("Save")
+Gui.FormPart.cmdSave.FontName("Tahoma")
+Gui.FormPart.cmdSave.FontSize(8.25)
+Gui.FormPart.cmdSave.Anchor(6)
+Gui.FormPart.cmdSave.Event(Click,cmdSave_Click)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+
+F.Intrinsic.Control.SelectCase(V.Caller.Hook)
+	F.Intrinsic.Control.Case(10120)
+		V.Passed.000069.Set("Customer Link")
+		
+	F.Intrinsic.Control.Case(10220)	
+		'getting thread info for selected part
+		F.Intrinsic.Control.CallSub(Get_Data)
+		
+		Gui.FormPart..Show
+		Gui.FormPart..AlwaysOnTop(True)
+		Gui.FormPart..AlwaysOnTop(False)
+		
+	F.Intrinsic.Control.CaseElse
+		F.Intrinsic.Control.End
+		
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PART_CUST.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(FormPart_UnLoad)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Main.End
+
+Program.Sub.cmdSave_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdSave_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+Gui.FormPart.cmdSave.Enabled(False)
+
+F.ODBC.Connection!con.OpenCompanyConnection
+F.Data.DataTable.SaveToDB("Cust",Con,"GCG_6925_PART_CUST","Part*!*Customer",256,"Part@!@Part*!*Customer@!@Customer*!*Prt_Pck_Doc@!@Prt_Pck_Doc")
+F.ODBC.Connection!con.Close
+
+Gui.FormPart.cmdSave.Enabled(True)
+
+F.Intrinsic.UI.Msgbox("Data Saved")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdSave_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PART_CUST.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(FormPart_UnLoad)
+Function.Intrinsic.Control.EndIf
+Program.Sub.cmdSave_Click.End
+
+Program.Sub.GsGridCust_RowCellClick.Start
+F.Intrinsic.Control.SetErrorHandler("GsGridCust_RowCellClick_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+F.Intrinsic.Control.If(V.Args.Column.UCase,=,"PRT_PCK_DOC")
+	F.Data.DataTable.SetValue("Cust",v.Args.RowIndex,"Prt_Pck_Doc",V.DataTable.Cust(V.Args.RowIndex).Prt_Pck_Doc!FieldValNot)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("GsGridCust_RowCellClick_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PART_CUST.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(FormPart_UnLoad)
+Function.Intrinsic.Control.EndIf
+Program.Sub.GsGridCust_RowCellClick.End
+
+Program.Sub.FormPart_UnLoad.Start
+F.Intrinsic.Control.SetErrorHandler("FormPart_UnLoad_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("FormPart_UnLoad_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.Control.End
+Function.Intrinsic.Control.EndIf
+Program.Sub.FormPart_UnLoad.End
+
+Program.Sub.Get_Data.Start
+F.Intrinsic.Control.SetErrorHandler("Get_Data_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String,"")
+V.Local.sSql.Declare(String,"")
+V.Local.sPart.Declare(String,"")
+V.Local.sRev.Declare(String,"")
+V.Local.sLocation.Declare(String,"")
+V.Local.bRev.Declare(Boolean,False)
+
+F.Global.General.ReadOption("070008",0,"0000",V.Local.bRev)
+
+F.Intrinsic.String.RTrim(V.Passed.000007,V.Local.sPart)
+F.Intrinsic.String.RTrim(V.Passed.000008,V.Local.sRev)
+
+F.Intrinsic.Control.If(V.Local.bRev)
+	F.Intrinsic.String.RPad(V.Local.sPart," ",17,V.Local.sPart)
+	F.Intrinsic.String.Build("{0}{1}",V.Local.sPart,V.Local.sRev,V.Local.sPart)
+F.Intrinsic.Control.EndIf
+
+F.ODBC.Connection!con.OpenCompanyConnection
+
+F.Intrinsic.String.Build("Select Customer, Prt_Pck_Doc From GCG_6925_PART_CUST Where Part = '{0}'",V.Local.sPart.Trim,V.Local.sSql)
+F.Data.Dictionary.CreateFromSQL("PRT",con,V.Local.sSql)
+F.Data.Dictionary.SetDefaultReturn("PRT",False)
+
+F.Intrinsic.String.Build("Select '{0}' as Part, Customer, Name_Customer, Cast(0 as bit) as Prt_Pck_Doc From V_Customer_Master Order by Customer",V.Local.sPart.Trim,V.Local.sSql)
+F.Data.DataTable.CreateFromSQL("Cust",Con,V.Local.sSql,True)
+
+F.ODBC.Connection!con.Close
+
+F.Data.DataTable.FillFromDictionary("Cust","PRT","Customer","Prt_Pck_Doc")
+
+F.Data.Dictionary.Close("PRT")
+
+Gui.FormPart.GsGridCust.AddGridviewFromDatatable("GCust","Cust")
+
+Gui.FormPart.GsGridCust.SetGridviewProperty("GCust","Editable",False)
+Gui.FormPart.GsGridCust.SetGridviewProperty("GCust","ReadOnly",True)
+Gui.FormPart.GsGridCust.SetGridviewProperty("GCust","OptionsViewColumnAutoWidth",True)
+Gui.FormPart.GsGridCust.SetGridviewProperty("GCust","OptionsViewShowAutoFilterRow",True)
+
+Gui.FormPart.GsGridCust.SetColumnProperty("GCust","Part","Visible",False)
+Gui.FormPart.GsGridCust.SetColumnProperty("GCust","Part","Caption","Part")
+Gui.FormPart.GsGridCust.SetColumnProperty("GCust","Customer","Caption","Customer #")
+Gui.FormPart.GsGridCust.SetColumnProperty("GCust","Name_Customer","Caption","Customer")
+Gui.FormPart.GsGridCust.SetColumnProperty("GCust","Prt_Pck_Doc","Caption","Print Doc")
+
+Gui.FormPart.GsGridCust.MainView("GCust")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Get_Data_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	F.Intrinsic.String.Build("Project: GCG_6925_PART_CUST.g2u {0}{0}Subroutine: {1}{0}Error Occurred {2} with description {3}",V.Ambient.NewLine,V.Ambient.CurrentSubroutine,V.Ambient.ErrorNumber,V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(FormPart_UnLoad)
+Function.Intrinsic.Control.EndIf
+Program.Sub.Get_Data.End
+
+Program.Sub.Comments.Start
+${$5$}$20.1.8286.22461$}$1
+${$6$}$rking$}$20220930081240087$}$QNdZLVy4bWuiWa9jh1ZTiKVzNnEzrvL4aJNCO7QPW24y7LMSydtjl3M4zW/oazBqcr55lUmXZI0=
+Program.Sub.Comments.End
